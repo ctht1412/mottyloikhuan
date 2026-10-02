@@ -88,7 +88,11 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
   background:var(--lilac);border-bottom:2px solid var(--pen);padding:10px 14px 8px;
   font-family:var(--f-fun);font-weight:800;font-size:22px;color:var(--pen);line-height:1.1;
 }
-.back-sub{margin:8px 14px 0;font-family:var(--f-disp);font-size:12px;color:var(--pen);transform:rotate(-3deg);transform-origin:left}
+.back-sub{margin:10px 12px 0;line-height:1.9;font-family:var(--f-disp);font-size:13px;color:var(--pen);transform:rotate(-4deg);transform-origin:left}
+.back-sub .ch{display:inline-block;transform:translateY(var(--y)) rotate(var(--r));animation:wiggle 2.6s ease-in-out infinite;animation-delay:var(--d)}
+.back-sub .ch.pop{color:var(--cherry);font-weight:400}
+@keyframes wiggle{50%{transform:translateY(calc(var(--y) * -1)) rotate(calc(var(--r) * -1))}}
+@media (prefers-reduced-motion:reduce){.back-sub .ch{animation:none}}
 .main-card{
   position:relative;z-index:2;margin:112px 0 0 1%;width:90%;transform:rotate(-2deg);
   background:var(--mint);color:var(--pen);border:2px solid var(--pen);
@@ -109,20 +113,20 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
 .hero.over .fill{background:repeating-linear-gradient(90deg,#F6C9D2 0 6px,#FFFBF3 6px 12px);border-color:var(--cream)}
 
 .seal{
-  position:absolute;z-index:3;right:-22px;top:-40px;width:88px;height:88px;transform:rotate(10deg);
+  position:absolute;z-index:3;right:-14px;bottom:-50px;width:76px;height:76px;transform:rotate(10deg);
   display:grid;place-items:center;text-align:center;color:var(--pen);
 }
 .seal svg{position:absolute;inset:0;width:100%;height:100%}
 .seal-txt{position:relative;line-height:1}
-.seal-txt b{display:block;font-family:var(--f-fun);font-size:21px;font-weight:800}
-.seal-txt span{font-family:var(--f-disp);font-size:10px}
+.seal-txt b{display:block;font-family:var(--f-fun);font-size:18px;font-weight:800}
+.seal-txt span{font-family:var(--f-disp);font-size:9px}
 
 .doodle{position:absolute;pointer-events:none;overflow:visible}
 .d-swirl{left:-10px;top:4px;width:86px;height:120px;z-index:1}
 .d-spark1{left:30%;top:6px;width:34px;height:34px;z-index:1}
 .d-star1{left:22%;top:60px;width:16px;height:16px}
 .d-bow{left:-18px;top:-30px;width:58px;height:42px;z-index:4;transform:rotate(-16deg)}
-.d-cherry{right:4%;bottom:-6px;width:40px;height:46px;z-index:3;transform:rotate(12deg)}
+.d-cherry{left:6%;bottom:-16px;width:40px;height:46px;z-index:3;transform:rotate(12deg)}
 .d-spark2{left:44%;bottom:-18px;width:26px;height:26px;z-index:3}
 .d-star2{right:30%;bottom:-24px;width:14px;height:14px;z-index:3}
 
@@ -138,7 +142,7 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
 }
 .ticket::before,h2::before{left:-9px;clip-path:inset(0 0 0 50%)}
 .ticket::after,h2::after{right:-9px;clip-path:inset(0 50% 0 0)}
-.stats{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:34px 2px 0;font-size:15px}
+.stats{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:56px 2px 0;font-size:15px}
 .stats b{font-weight:800}
 .ticket{transform:rotate(-3deg)}
 .cloud{
@@ -286,7 +290,7 @@ li:last-child{border-bottom:0}
   <section class="hero" id="hero">
     <div class="back" aria-hidden="false">
       <div class="back-head" id="month"></div>
-      <p class="back-sub">manifest sớm có 1 tỷ đầu tiên</p>
+      <p class="back-sub">Manifest sớm có 1 tỷ đầu tiên!! &gt;&lt;</p>
     </div>
     <svg class="doodle d-swirl" viewBox="0 0 86 120" aria-hidden="true"><path d="M60 116 C30 104 2 92 10 70 C16 52 44 58 40 74 C36 88 14 80 18 62 C24 38 64 40 70 20 C74 8 62 2 52 6" fill="none" style="stroke:var(--ribbon)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <svg class="doodle d-spark1" aria-hidden="true"><use href="#d-spark"/></svg>
@@ -668,6 +672,28 @@ li:last-child{border-bottom:0}
     if (n > 0){ budget = n*1000; write(BKEY, String(budget)); $("budgetEditor").classList.remove("show"); render(); }
   });
 
+
+  // Chữ manifest uốn lượn: mỗi ký tự lệch lên xuống và nghiêng một chút
+  (function(){
+    var el = document.querySelector(".back-sub");
+    if (!el) return;
+    var text = el.textContent;
+    el.setAttribute("aria-label", text);
+    el.textContent = "";
+    var i = 0;
+    Array.from(text).forEach(function(ch){
+      if (ch === " "){ el.appendChild(document.createTextNode(" ")); return; }
+      var sp = document.createElement("span");
+      sp.className = "ch" + ("!><1".indexOf(ch) > -1 ? " pop" : "");
+      sp.setAttribute("aria-hidden", "true");
+      sp.textContent = ch;
+      sp.style.setProperty("--y", (Math.sin(i * 0.85) * 3.2).toFixed(1) + "px");
+      sp.style.setProperty("--r", (Math.sin(i * 1.7 + 1) * 9).toFixed(1) + "deg");
+      sp.style.setProperty("--d", (i * -0.11).toFixed(2) + "s");
+      el.appendChild(sp);
+      i++;
+    });
+  })();
   syncCat();
   render();
 })();
