@@ -238,6 +238,10 @@ li:last-child{border-bottom:0}
 .note{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .date{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .amt{font-weight:800;white-space:nowrap}
+.info{cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+li.open{background:color-mix(in srgb,var(--pink) 22%,transparent)}
+li.open .note,li.open .date{white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word}
+li.open .info{-webkit-user-select:text;user-select:text}
 .del{
   border:0;background:transparent;color:var(--mute);font:inherit;font-size:24px;line-height:1;
   width:36px;height:36px;border-radius:10px;cursor:pointer;
@@ -673,6 +677,10 @@ li:last-child{border-bottom:0}
       ico.style.background = c ? c.color : NOCAT.color;
 
       var info = document.createElement("div"); info.className = "info";
+      info.setAttribute("role","button"); info.tabIndex = 0;
+      info.setAttribute("aria-label","Chạm để xem đầy đủ ghi chú");
+      info.onclick = function(){ li.classList.toggle("open"); };
+      info.onkeydown = function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); li.classList.toggle("open"); } };
       var n = document.createElement("div"); n.className = "note";
       if (c){
         n.textContent = c.label + (it.detail ? ": " + it.detail : "");
