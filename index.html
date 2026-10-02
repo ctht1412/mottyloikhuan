@@ -80,7 +80,7 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
 /* ---------- Thẻ chính: ảnh ghép kiểu poster ---------- */
 .hero{position:relative;display:flow-root;padding-bottom:4px}
 .back{
-  position:absolute;top:8px;right:3%;width:64%;height:170px;transform:rotate(4deg);
+  position:absolute;top:8px;right:3%;width:72%;height:170px;transform:rotate(4deg);
   background:var(--cream);border:2px solid var(--pen);border-radius:6px 10px 8px 12px;overflow:hidden;
   box-shadow:0 4px 0 rgba(90,52,38,.15);
 }
@@ -88,10 +88,11 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
   background:var(--lilac);border-bottom:2px solid var(--pen);padding:10px 14px 8px;
   font-family:var(--f-fun);font-weight:800;font-size:22px;color:var(--pen);line-height:1.1;
 }
-.back-sub{margin:10px 12px 0;line-height:1.9;font-family:var(--f-disp);font-size:13px;color:var(--pen);transform:rotate(-4deg);transform-origin:left}
-.back-sub .ch{display:inline-block;transform:translateY(var(--y)) rotate(var(--r));animation:wiggle 2.6s ease-in-out infinite;animation-delay:var(--d)}
-.back-sub .ch.pop{color:var(--cherry);font-weight:400}
-@keyframes wiggle{50%{transform:translateY(calc(var(--y) * -1)) rotate(calc(var(--r) * -1))}}
+.back-sub{margin:16px 10px 0;text-align:center;line-height:1.6;font-family:var(--f-fun);font-weight:700;font-size:14px;color:var(--pen);white-space:nowrap;transform:rotate(-3deg);transform-origin:center}
+.back-sub .w{display:inline-block;white-space:nowrap}
+.back-sub .ch{display:inline-block;animation:bob 1.8s ease-in-out infinite}
+.back-sub .ch.pop{color:var(--cherry)}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-3px) rotate(7deg)}}
 @media (prefers-reduced-motion:reduce){.back-sub .ch{animation:none}}
 .main-card{
   position:relative;z-index:2;margin:112px 0 0 1%;width:90%;transform:rotate(-2deg);
@@ -123,7 +124,7 @@ main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
 
 .doodle{position:absolute;pointer-events:none;overflow:visible}
 .d-swirl{left:-10px;top:4px;width:86px;height:120px;z-index:1}
-.d-spark1{left:30%;top:6px;width:34px;height:34px;z-index:1}
+.d-spark1{right:-4px;top:-10px;width:34px;height:34px;z-index:1}
 .d-star1{left:22%;top:60px;width:16px;height:16px}
 .d-bow{left:-18px;top:-30px;width:58px;height:42px;z-index:4;transform:rotate(-16deg)}
 .d-cherry{left:6%;bottom:-16px;width:40px;height:46px;z-index:3;transform:rotate(12deg)}
@@ -673,26 +674,39 @@ li:last-child{border-bottom:0}
   });
 
 
-  // Chữ manifest uốn lượn: mỗi ký tự lệch lên xuống và nghiêng một chút
+  // Chữ manifest uốn lượn: lệch lên xuống, nghiêng nhẹ và nhún liên tục
   (function(){
     var el = document.querySelector(".back-sub");
     if (!el) return;
-    var text = el.textContent;
+    var text = el.textContent.trim();
     el.setAttribute("aria-label", text);
     el.textContent = "";
     var i = 0;
-    Array.from(text).forEach(function(ch){
-      if (ch === " "){ el.appendChild(document.createTextNode(" ")); return; }
-      var sp = document.createElement("span");
-      sp.className = "ch" + ("!><1".indexOf(ch) > -1 ? " pop" : "");
-      sp.setAttribute("aria-hidden", "true");
-      sp.textContent = ch;
-      sp.style.setProperty("--y", (Math.sin(i * 0.85) * 3.2).toFixed(1) + "px");
-      sp.style.setProperty("--r", (Math.sin(i * 1.7 + 1) * 9).toFixed(1) + "deg");
-      sp.style.setProperty("--d", (i * -0.11).toFixed(2) + "s");
-      el.appendChild(sp);
-      i++;
+    text.split(" ").forEach(function(word, wi){
+      if (wi > 0) el.appendChild(document.createTextNode(" "));
+      var w = document.createElement("span");
+      w.className = "w"; w.setAttribute("aria-hidden", "true");
+      Array.from(word).forEach(function(ch){
+        var outer = document.createElement("span");
+        outer.style.display = "inline-block";
+        outer.style.transform = "translateY(" + (Math.sin(i * 0.85) * 2.4).toFixed(1) + "px) rotate(" + (Math.sin(i * 1.7 + 1) * 7).toFixed(1) + "deg)";
+        var sp = document.createElement("span");
+        sp.className = "ch" + ("!><1".indexOf(ch) > -1 ? " pop" : "");
+        sp.style.animationDelay = (i * -0.12).toFixed(2) + "s";
+        sp.textContent = ch;
+        outer.appendChild(sp); w.appendChild(outer);
+        i++;
+      });
+      el.appendChild(w);
     });
+    function fit(){
+      var size = 14;
+      el.style.fontSize = size + "px";
+      while (el.scrollWidth > el.clientWidth + 1 && size > 9){ size -= 0.5; el.style.fontSize = size + "px"; }
+    }
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    window.addEventListener("resize", fit);
   })();
   syncCat();
   render();
