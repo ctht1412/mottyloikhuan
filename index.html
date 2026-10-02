@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Chi tiêu">
 <meta name="theme-color" content="#F4ECDF">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
@@ -76,7 +78,7 @@ body{
 main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
 
 /* ---------- Thẻ chính: ảnh ghép kiểu poster ---------- */
-.hero{position:relative;padding-bottom:4px}
+.hero{position:relative;display:flow-root;padding-bottom:4px}
 .back{
   position:absolute;top:8px;right:3%;width:64%;height:170px;transform:rotate(4deg);
   background:var(--cream);border:2px solid var(--pen);border-radius:6px 10px 8px 12px;overflow:hidden;
@@ -284,7 +286,7 @@ li:last-child{border-bottom:0}
   <section class="hero" id="hero">
     <div class="back" aria-hidden="false">
       <div class="back-head" id="month"></div>
-      <p class="back-sub">sổ chi tiêu nhỏ xinh</p>
+      <p class="back-sub">manifest sớm có 1 tỷ đầu tiên</p>
     </div>
     <svg class="doodle d-swirl" viewBox="0 0 86 120" aria-hidden="true"><path d="M60 116 C30 104 2 92 10 70 C16 52 44 58 40 74 C36 88 14 80 18 62 C24 38 64 40 70 20 C74 8 62 2 52 6" fill="none" style="stroke:var(--ribbon)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <svg class="doodle d-spark1" aria-hidden="true"><use href="#d-spark"/></svg>
