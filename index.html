@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Chi tiêu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chi tiêu">
+<meta name="theme-color" content="#F4ECDF">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playwrite+VN:wght@100..400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F4ECDF; --speck:rgba(110,80,55,.13); --polka:rgba(214,196,168,.45);
+  --paper:#FFFBF3; --paper2:#F4ECDF; --field:#FFFDF8;
+  --ink:#5A3426; --mute:#86624F; --edge:#5A3426; --line:rgba(90,52,38,.25);
+  --btn:#F6C9D2; --btn-ink:#5A3426; --focus:#3E7D3A; --warn:#B7322C; --k:#B7322C;
+  --alert-bg:#FBEFC2; --alert-ink:#7A2A1E;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1.5l6 6 6-6' fill='none' stroke='%235A3426' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  /* màu tranh và thẻ chính giữ nguyên ở cả sáng và tối */
+  --pen:#5A3426; --mint:#CFE6D8; --pink:#F6C9D2; --lilac:#E2C8EC; --butter:#F7E3A1;
+  --sky:#C9DDF0; --peach:#F9D9B5; --cherry:#B7322C; --leaf:#3E7D3A; --ribbon:#9CCAA6; --cream:#FFFBF3; --matcha:#B7D39B; --matcha-ear:#F6C9D2;
+  --plaid:
+    repeating-linear-gradient(90deg,rgba(246,201,210,.9) 0 6px,transparent 6px 14px),
+    repeating-linear-gradient(0deg,rgba(156,202,166,.75) 0 4px,transparent 4px 10px),
+    repeating-linear-gradient(90deg,transparent 0 9px,rgba(247,227,161,.95) 9px 11px,transparent 11px 14px),
+    #FFFBF3;
+  --plaid-warn:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.4) 0 4px,transparent 4px 10px),
+    repeating-linear-gradient(90deg,#B7322C 0 6px,#E07A73 6px 12px);
+  --blob:22px 28px 20px 26px / 26px 20px 28px 22px;
+  --f-body:"Mali",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-disp:"Playwrite VN","Pangolin","Mali",cursive;
+  --f-fun:"Grandstander","Mali",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#2B231E; --speck:rgba(246,232,218,.07); --polka:rgba(246,232,218,.05);
+  --paper:#3A2F28; --paper2:#2B231E; --field:#2B231E;
+  --ink:#F6E8DA; --mute:#D8C3B0; --edge:#F6E8DA; --line:rgba(246,232,218,.25);
+  --btn:#F6C9D2; --btn-ink:#3A2018; --focus:#9FD3A8; --warn:#FF9C94; --k:#FF9C94;
+  --alert-bg:#4A3A20; --alert-ink:#FBE7A8;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1.5l6 6 6-6' fill='none' stroke='%23F6E8DA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#2B231E; --speck:rgba(246,232,218,.07); --polka:rgba(246,232,218,.05);
+  --paper:#3A2F28; --paper2:#2B231E; --field:#2B231E;
+  --ink:#F6E8DA; --mute:#D8C3B0; --edge:#F6E8DA; --line:rgba(246,232,218,.25);
+  --btn:#F6C9D2; --btn-ink:#3A2018; --focus:#9FD3A8; --warn:#FF9C94; --k:#FF9C94;
+  --alert-bg:#4A3A20; --alert-ink:#FBE7A8;
+  --chev:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1.5l6 6 6-6' fill='none' stroke='%23F6E8DA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;color:var(--ink);font-family:var(--f-body);font-weight:500;
+  background-color:var(--bg);
+  /* giấy kraft: lốm đốm + chấm bi mờ */
+  background-image:
+    radial-gradient(var(--speck) 1px,transparent 1.6px),
+    radial-gradient(var(--speck) .8px,transparent 1.4px),
+    radial-gradient(var(--speck) 1.2px,transparent 1.8px),
+    radial-gradient(var(--polka) 3px,transparent 3.6px);
+  background-size:23px 29px,37px 41px,53px 47px,34px 34px;
+  background-position:0 0,11px 17px,29px 7px,17px 17px;
+  -webkit-font-smoothing:antialiased;
+}
+main{max-width:480px;margin:0 auto;padding:18px 16px 48px;overflow-x:clip}
+
+/* ---------- Thẻ chính: ảnh ghép kiểu poster ---------- */
+.hero{position:relative;padding-bottom:4px}
+.back{
+  position:absolute;top:8px;right:3%;width:64%;height:170px;transform:rotate(4deg);
+  background:var(--cream);border:2px solid var(--pen);border-radius:6px 10px 8px 12px;overflow:hidden;
+  box-shadow:0 4px 0 rgba(90,52,38,.15);
+}
+.back-head{
+  background:var(--lilac);border-bottom:2px solid var(--pen);padding:10px 14px 8px;
+  font-family:var(--f-fun);font-weight:800;font-size:22px;color:var(--pen);line-height:1.1;
+}
+.back-sub{margin:8px 14px 0;font-family:var(--f-disp);font-size:12px;color:var(--pen);transform:rotate(-3deg);transform-origin:left}
+.main-card{
+  position:relative;z-index:2;margin:112px 0 0 1%;width:90%;transform:rotate(-2deg);
+  background:var(--mint);color:var(--pen);border:2px solid var(--pen);
+  border-radius:8px 14px 10px 12px / 12px 8px 14px 10px;padding:22px 20px 22px;
+  box-shadow:0 6px 0 rgba(90,52,38,.18);transition:background .3s ease;
+}
+.hero.over .main-card{background:var(--cherry);color:var(--cream)}
+.left-label{font-family:var(--f-disp);font-size:20px;margin:0;font-weight:400}
+.left{
+  font-family:var(--f-fun);font-size:clamp(40px,13vw,60px);font-weight:800;
+  letter-spacing:-0.01em;margin:4px 0 12px;line-height:1.05;white-space:nowrap;
+}
+.bar{height:18px;border-radius:99px;overflow:hidden;background:var(--cream);border:2px solid var(--pen)}
+.hero.over .bar{border-color:var(--cream);background:rgba(255,255,255,.2)}
+.fill{height:100%;width:0;background:var(--plaid);border-right:2px solid var(--pen);transition:width .35s ease}
+.fill[style="width: 0%;"]{border-right:0}
+.fill.warn{background:var(--plaid-warn)}
+.hero.over .fill{background:repeating-linear-gradient(90deg,#F6C9D2 0 6px,#FFFBF3 6px 12px);border-color:var(--cream)}
+
+.seal{
+  position:absolute;z-index:3;right:-22px;top:-40px;width:88px;height:88px;transform:rotate(10deg);
+  display:grid;place-items:center;text-align:center;color:var(--pen);
+}
+.seal svg{position:absolute;inset:0;width:100%;height:100%}
+.seal-txt{position:relative;line-height:1}
+.seal-txt b{display:block;font-family:var(--f-fun);font-size:21px;font-weight:800}
+.seal-txt span{font-family:var(--f-disp);font-size:10px}
+
+.doodle{position:absolute;pointer-events:none;overflow:visible}
+.d-swirl{left:-10px;top:4px;width:86px;height:120px;z-index:1}
+.d-spark1{left:30%;top:6px;width:34px;height:34px;z-index:1}
+.d-star1{left:22%;top:60px;width:16px;height:16px}
+.d-bow{left:-18px;top:-30px;width:58px;height:42px;z-index:4;transform:rotate(-16deg)}
+.d-cherry{right:4%;bottom:-6px;width:40px;height:46px;z-index:3;transform:rotate(12deg)}
+.d-spark2{left:44%;bottom:-18px;width:26px;height:26px;z-index:3}
+.d-star2{right:30%;bottom:-24px;width:14px;height:14px;z-index:3}
+
+/* nhãn vé raffle */
+.ticket,h2{
+  position:relative;display:inline-block;background:var(--pink);color:var(--pen);
+  border:2px solid var(--pen);border-radius:7px;padding:6px 22px;
+  box-shadow:0 3px 0 rgba(90,52,38,.2);
+}
+.ticket::before,.ticket::after,h2::before,h2::after{
+  content:"";position:absolute;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--pen);
+}
+.ticket::before,h2::before{left:-9px;clip-path:inset(0 0 0 50%)}
+.ticket::after,h2::after{right:-9px;clip-path:inset(0 50% 0 0)}
+.stats{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:34px 2px 0;font-size:15px}
+.stats b{font-weight:800}
+.ticket{transform:rotate(-3deg)}
+.cloud{
+  display:inline-block;background:var(--peach);color:var(--pen);border:2px solid var(--pen);
+  padding:9px 18px;transform:rotate(3deg);
+  border-radius:46% 54% 42% 58% / 58% 44% 56% 42%;box-shadow:0 3px 0 rgba(90,52,38,.2);
+}
+
+.alert{
+  margin:18px 0 0;padding:11px 14px;font-size:15px;font-weight:600;display:none;
+  background:var(--alert-bg);color:var(--alert-ink);border:1.5px dashed var(--alert-ink);
+  border-radius:16px 18px 14px 18px / 18px 14px 18px 16px;
+}
+.alert.show{display:block}
+
+/* ---------- Giấy: form, danh mục, danh sách ---------- */
+.card,.sum,ul{
+  background:var(--paper);border:2px solid var(--edge);border-radius:var(--blob);
+  box-shadow:0 5px 0 rgba(90,52,38,.18);
+}
+.card{padding:18px;margin-top:24px}
+#form{display:grid;gap:10px}
+label{font-size:14px;color:var(--mute);font-weight:600}
+input,select{
+  width:100%;font:inherit;font-size:18px;font-weight:600;padding:12px 14px;
+  border:2px solid var(--edge);border-radius:16px 18px 14px 18px / 18px 14px 18px 16px;
+  background:var(--field);color:var(--ink);
+}
+select{
+  appearance:none;-webkit-appearance:none;padding-right:42px;
+  background-image:var(--chev);background-repeat:no-repeat;background-position:right 16px center;
+}
+select.placeholder{color:var(--mute)}
+input::placeholder{color:var(--mute);opacity:.65;font-weight:500}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.row{display:grid;gap:6px}
+.row[hidden]{display:none}
+.unit{position:relative}
+.unit input{padding-right:44px}
+.unit span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--k);font-family:var(--f-disp);font-weight:400;font-size:22px;pointer-events:none}
+.preview{min-height:20px;margin:0;font-size:14px;color:var(--mute)}
+.preview b{color:var(--ink);font-weight:800}
+.preview.over b{color:var(--warn)}
+.err{margin:0;font-size:14px;font-weight:700;color:var(--warn);display:none}
+.err.show{display:block}
+.btn{
+  font:inherit;font-weight:800;font-size:18px;padding:13px;cursor:pointer;
+  background:var(--btn);color:var(--btn-ink);border:2px solid var(--edge);
+  border-radius:var(--blob);box-shadow:0 4px 0 var(--edge);
+}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.clock{margin:0;text-align:center;font-size:12px;color:var(--mute)}
+
+h2{margin:32px 0 12px 10px;font-family:var(--f-disp);font-size:17px;font-weight:400;line-height:1.35;transform:rotate(-2deg)}
+#sumWrap h2{background:var(--lilac)}
+.sum{padding:4px 14px}
+.srow{display:grid;grid-template-columns:44px 1fr auto;gap:5px 12px;align-items:center;padding:10px 0;border-bottom:1.5px dashed var(--line)}
+.srow:last-child{border-bottom:0}
+.srow .ico{grid-row:1 / span 2}
+.slabel{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.samt{font-weight:800;white-space:nowrap}
+.sbar{grid-column:2 / span 2;height:10px;border-radius:99px;background:var(--paper2);border:1.5px solid var(--edge);overflow:hidden}
+.sbar i{display:block;height:100%}
+
+ul{list-style:none;margin:0;padding:0;overflow:hidden}
+li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1.5px dashed var(--line)}
+li:last-child{border-bottom:0}
+.ico{
+  font-size:22px;line-height:1;width:44px;height:44px;display:grid;place-items:center;flex:none;
+  border:1.5px solid var(--edge);border-radius:14px 17px 13px 16px / 16px 13px 17px 14px;
+}
+.info{flex:1;min-width:0}
+.note{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.date{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-weight:800;white-space:nowrap}
+.del{
+  border:0;background:transparent;color:var(--mute);font:inherit;font-size:24px;line-height:1;
+  width:36px;height:36px;border-radius:10px;cursor:pointer;
+}
+.del:active{background:var(--line)}
+.empty{padding:24px 14px;color:var(--mute);text-align:center;font-size:14px;display:block}
+.tools{margin-top:22px;display:flex;justify-content:center}
+.editor{display:none;gap:10px;margin-top:6px}
+.editor.show{display:flex}
+.btn.small{padding:0 22px;font-size:17px}
+.link{border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:700;text-decoration:underline wavy var(--focus);text-underline-offset:5px;cursor:pointer;padding:8px}
+@media (prefers-reduced-motion:reduce){.fill,.btn,.main-card{transition:none}}
+/* ---------- Bé Mochi matcha: linh vật nhỏ hiện lên khi thêm khoản chi ---------- */
+.buddy{
+  position:fixed;z-index:50;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  width:min(92vw,420px);display:flex;align-items:flex-end;gap:6px;
+  transform:translate(-50%,160%);transition:transform .45s cubic-bezier(.2,1.4,.4,1);
+}
+.buddy.show{transform:translate(-50%,0)}
+.mochi{position:relative;flex:none;width:96px;height:90px}
+.mochi svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mochi .item{position:absolute;left:50%;top:77%;transform:translate(-50%,-50%);font-size:30px;line-height:1}
+.mochi-body{animation:none}
+.buddy.show .mochi-body{animation:bob 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.bubble{
+  flex:1;position:relative;margin-bottom:22px;padding:10px 14px;
+  background:var(--cream);color:var(--pen);border:2px solid var(--pen);
+  border-radius:18px 22px 16px 20px / 20px 16px 22px 18px;box-shadow:0 4px 0 rgba(90,52,38,.2);
+}
+.bubble::before{
+  content:"";position:absolute;left:-10px;bottom:14px;width:14px;height:14px;background:var(--cream);
+  border-left:2px solid var(--pen);border-bottom:2px solid var(--pen);transform:rotate(45deg);
+}
+.bubble b{display:block;font-family:var(--f-fun);font-size:20px;font-weight:800}
+.bubble span{font-size:15px;font-weight:600}
+.mouth-sad{display:none}
+.buddy.sad .mouth-happy{display:none}
+.buddy.sad .mouth-sad{display:inline}
+@media (prefers-reduced-motion:reduce){.buddy{transition:none}.buddy.show .mochi-body{animation:none}}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="d-spark" viewBox="0 0 24 24">
+    <path d="M12 1 C12.8 8.5 15.5 11.2 23 12 C15.5 12.8 12.8 15.5 12 23 C11.2 15.5 8.5 12.8 1 12 C8.5 11.2 11.2 8.5 12 1 Z" style="fill:var(--butter);stroke:var(--pen)" stroke-width="1.2" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="d-star" viewBox="0 0 24 24">
+    <path d="M12 2l2.8 6.2 6.7.6-5.1 4.5 1.6 6.6L12 16.4 6 19.9l1.6-6.6-5.1-4.5 6.7-.6z" style="fill:var(--leaf)" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="d-bow" viewBox="0 0 100 70">
+    <g style="fill:var(--pink);stroke:var(--pen)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M47 33 C42 46 36 56 30 66 L40 62 L45 68 C48 56 50 44 50 35 Z"/>
+      <path d="M53 33 C58 46 64 56 70 66 L60 62 L55 68 C52 56 50 44 50 35 Z"/>
+      <path d="M44 27 C32 8 8 6 9 26 C10 43 32 42 44 29 Z"/>
+      <path d="M56 27 C68 8 92 6 91 26 C90 43 68 42 56 29 Z"/>
+      <circle cx="50" cy="28" r="7"/>
+    </g>
+  </symbol>
+  <symbol id="d-cherry" viewBox="0 0 40 46">
+    <path d="M14 30 C16 18 20 10 28 3 M28 30 C27 20 27 12 28 3" fill="none" style="stroke:var(--pen)" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M28 3 C33 1 38 4 38 8 C33 9 30 7 28 3 Z" style="fill:var(--leaf);stroke:var(--pen)" stroke-width="1.2"/>
+    <circle cx="12" cy="36" r="8" style="fill:var(--cherry);stroke:var(--pen)" stroke-width="1.6"/>
+    <circle cx="29" cy="36" r="8" style="fill:var(--cherry);stroke:var(--pen)" stroke-width="1.6"/>
+    <circle cx="9" cy="33" r="1.8" fill="#FFFBF3"/><circle cx="26" cy="33" r="1.8" fill="#FFFBF3"/>
+  </symbol>
+</svg>
+<main>
+  <section class="hero" id="hero">
+    <div class="back" aria-hidden="false">
+      <div class="back-head" id="month"></div>
+      <p class="back-sub">sổ chi tiêu nhỏ xinh</p>
+    </div>
+    <svg class="doodle d-swirl" viewBox="0 0 86 120" aria-hidden="true"><path d="M60 116 C30 104 2 92 10 70 C16 52 44 58 40 74 C36 88 14 80 18 62 C24 38 64 40 70 20 C74 8 62 2 52 6" fill="none" style="stroke:var(--ribbon)" stroke-width="4.5" stroke-linecap="round"/></svg>
+    <svg class="doodle d-spark1" aria-hidden="true"><use href="#d-spark"/></svg>
+    <svg class="doodle d-star1" aria-hidden="true"><use href="#d-star"/></svg>
+
+    <div class="main-card">
+      <svg class="doodle d-bow" aria-hidden="true"><use href="#d-bow"/></svg>
+      <div class="seal" aria-label="Phần trăm đã tiêu">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50.0 8.0 A10.1 10.1 0 0 1 68.2 12.2 A10.1 10.1 0 0 1 82.8 23.8 A10.1 10.1 0 0 1 90.9 40.7 A10.1 10.1 0 0 1 90.9 59.3 A10.1 10.1 0 0 1 82.8 76.2 A10.1 10.1 0 0 1 68.2 87.8 A10.1 10.1 0 0 1 50.0 92.0 A10.1 10.1 0 0 1 31.8 87.8 A10.1 10.1 0 0 1 17.2 76.2 A10.1 10.1 0 0 1 9.1 59.3 A10.1 10.1 0 0 1 9.1 40.7 A10.1 10.1 0 0 1 17.2 23.8 A10.1 10.1 0 0 1 31.8 12.2 A10.1 10.1 0 0 1 50.0 8.0 Z" style="fill:var(--pink);stroke:var(--pen)" stroke-width="2.2" stroke-linejoin="round"/>
+          <circle cx="50" cy="50" r="31" fill="none" style="stroke:var(--pen)" stroke-width="1.4" stroke-dasharray="3 4" opacity=".6"/>
+        </svg>
+        <div class="seal-txt"><b id="pct">0%</b><span>đã tiêu</span></div>
+      </div>
+      <p class="left-label">Còn lại</p>
+      <p class="left" id="left">0k</p>
+      <div class="bar" role="progressbar" aria-label="Đã tiêu" aria-valuemin="0" aria-valuemax="100" id="bar"><div class="fill" id="fill"></div></div>
+      <svg class="doodle d-cherry" aria-hidden="true"><use href="#d-cherry"/></svg>
+      <svg class="doodle d-spark2" aria-hidden="true"><use href="#d-spark"/></svg>
+      <svg class="doodle d-star2" aria-hidden="true"><use href="#d-star"/></svg>
+    </div>
+
+    <div class="stats">
+      <span class="ticket">Đã tiêu <b id="spent">0k</b></span>
+      <span class="cloud">Ngân sách <b id="budget">0k</b></span>
+    </div>
+  </section>
+  <div class="alert" id="alert"></div>
+
+  <div id="form" class="card">
+    <div class="row">
+      <label for="amount">Số tiền (đơn vị k, nhập 45 là 45k)</label>
+      <div class="unit">
+        <input id="amount" inputmode="numeric" placeholder="45" autocomplete="off">
+        <span>k</span>
+      </div>
+    </div>
+    <p class="preview" id="preview"></p>
+
+    <div class="row">
+      <label for="cat">Danh mục</label>
+      <select id="cat" class="placeholder"></select>
+    </div>
+    <div class="row" id="extraRow" hidden>
+      <label for="extra" id="extraLabel"></label>
+      <input id="extra" autocomplete="off">
+    </div>
+    <div class="row" id="noteRow">
+      <label for="note">Ghi chú (không bắt buộc)</label>
+      <input id="note" placeholder="Ví dụ trà sữa size L" autocomplete="off">
+    </div>
+
+    <p class="err" id="err" role="alert"></p>
+    <button class="btn" type="button" id="addBtn">Thêm khoản chi</button>
+    <p class="clock" id="clock"></p>
+  </div>
+
+  <div id="sumWrap" hidden>
+    <h2>Theo danh mục</h2>
+    <div class="sum" id="sum"></div>
+  </div>
+
+  <div><h2>Các khoản chi tháng này</h2></div>
+  <ul id="list"></ul>
+
+  <div class="tools">
+    <button class="link" id="setBudget" type="button">Đổi ngân sách tháng</button>
+  </div>
+  <div id="budgetEditor" class="editor">
+    <div class="unit" style="flex:1">
+      <input id="budgetInput" inputmode="numeric" aria-label="Ngân sách tháng (k)" autocomplete="off">
+      <span>k</span>
+    </div>
+    <button class="btn small" type="button" id="saveBudget">Lưu</button>
+  </div>
+</main>
+
+<div class="buddy" id="buddy" role="status" aria-live="polite">
+  <div class="mochi" aria-hidden="true">
+    <svg viewBox="0 0 120 110"><g class="mochi-body">
+      <circle cx="30" cy="28" r="13" style="fill:var(--matcha);stroke:var(--pen)" stroke-width="2.4"/>
+      <circle cx="90" cy="28" r="13" style="fill:var(--matcha);stroke:var(--pen)" stroke-width="2.4"/>
+      <circle cx="30" cy="28" r="6.5" style="fill:var(--matcha-ear)"/>
+      <circle cx="90" cy="28" r="6.5" style="fill:var(--matcha-ear)"/>
+      <path d="M16 70 C8 40 30 16 60 16 C90 16 112 40 104 70 C99 94 82 104 60 104 C38 104 21 94 16 70 Z" style="fill:var(--matcha);stroke:var(--pen)" stroke-width="2.4" stroke-linejoin="round"/>
+      <ellipse cx="42" cy="34" rx="9" ry="4.5" fill="#FFFBF3" opacity=".55"/>
+      <circle cx="44" cy="52" r="8" style="fill:var(--pen)"/><circle cx="76" cy="52" r="8" style="fill:var(--pen)"/>
+      <circle cx="47" cy="48.5" r="2.8" fill="#FFFBF3"/><circle cx="79" cy="48.5" r="2.8" fill="#FFFBF3"/>
+      <circle cx="41.5" cy="55.5" r="1.3" fill="#FFFBF3"/><circle cx="73.5" cy="55.5" r="1.3" fill="#FFFBF3"/>
+      <ellipse cx="31" cy="64" rx="7" ry="3.8" fill="#EE8FA8" opacity=".8"/><ellipse cx="89" cy="64" rx="7" ry="3.8" fill="#EE8FA8" opacity=".8"/>
+      <path class="mouth-happy" d="M55 63 Q60 68 65 63" fill="none" style="stroke:var(--pen)" stroke-width="2" stroke-linecap="round"/>
+      <path class="mouth-sad" d="M55 67 Q60 61 65 67" fill="none" style="stroke:var(--pen)" stroke-width="2" stroke-linecap="round"/>
+    </g></svg>
+    <span class="item" id="buddyItem">☕</span>
+    <svg viewBox="0 0 120 110"><g class="mochi-body">
+      <ellipse cx="40" cy="86" rx="9" ry="7" style="fill:var(--matcha);stroke:var(--pen)" stroke-width="2"/>
+      <ellipse cx="80" cy="86" rx="9" ry="7" style="fill:var(--matcha);stroke:var(--pen)" stroke-width="2"/>
+    </g></svg>
+  </div>
+  <div class="bubble"><b id="buddyTitle"></b><span id="buddyText"></span></div>
+</div>
+
+<script>
+(function(){
+  // Dữ liệu lưu bằng đồng. Giao diện hiển thị và nhập theo đơn vị k (1k = 1.000đ).
+  var DEFAULT_BUDGET = 7000000;
+
+  // extra: có thì hiện thêm ô nhập tay dưới danh mục
+  var CATS = [
+    { id:"coffee", color:"#E9D3BF",  icon:"☕", label:"cóp phi" },
+    { id:"mukbang", color:"#F7E3A1", icon:"🍜", label:"mukbang" },
+    { id:"credit", color:"#C9DDF0",  icon:"💳", label:"tín dụng" },
+    { id:"mama", color:"#F6C9D2",    icon:"📇", label:"mama quẹt thẻ" },
+    { id:"skin", color:"#E2C8EC",    icon:"🧴", label:"kin ke" },
+    { id:"clothes", color:"#CFE6D8", icon:"👚", label:"guần áo" },
+    { id:"other", color:"#F9D9B5",   icon:"🧺", label:"đồ lặt vặt khác", extra:{ label:"Chi gì?", ph:"Ví dụ sạc dự phòng", err:"Nhập chi gì nhé." } },
+    { id:"treat", color:"#F4B9C2",   icon:"🎁", label:"người hào phóng", extra:{ label:"Mời ai ăn uống?", ph:"Ví dụ Lan, team visa", err:"Nhập mời ai nhé." } }
+  ];
+  var catById = {};
+  var NOCAT = { icon:"💸", label:"Chưa phân loại", color:"#EFE3D3" };
+  CATS.forEach(function(c){ catById[c.id] = c; });
+
+  var now = new Date();
+  var monthKey = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+  var KEY = "chitieu:" + monthKey;
+  var BKEY = "chitieu:budget";
+  var memory = {};
+
+  function read(k){
+    try { var v = localStorage.getItem(k); return v === null ? (memory[k] || null) : v; }
+    catch(e){ return memory[k] || null; }
+  }
+  function write(k,v){
+    memory[k] = v;
+    try { localStorage.setItem(k,v); } catch(e){}
+  }
+
+  var budget = parseInt(read(BKEY),10) || DEFAULT_BUDGET;
+  var items = [];
+  try { items = JSON.parse(read(KEY)) || []; } catch(e){ items = []; }
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fmt = function(dong){
+    return (dong/1000).toLocaleString("vi-VN",{maximumFractionDigits:1}) + "k";
+  };
+  var pad = function(n){ return String(n).padStart(2,"0"); };
+  var stamp = function(d){ return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+
+  $("month").textContent = "Tháng " + (now.getMonth()+1) + "/" + now.getFullYear();
+
+  // Dropdown danh mục
+  var sel = $("cat");
+  var ph = document.createElement("option");
+  ph.value = ""; ph.textContent = "Chọn danh mục";
+  sel.appendChild(ph);
+  CATS.forEach(function(c){
+    var o = document.createElement("option");
+    o.value = c.id; o.textContent = c.icon + "  " + c.label;
+    sel.appendChild(o);
+  });
+
+  function showErr(msg){
+    var e = $("err");
+    if (msg){ e.textContent = msg; e.classList.add("show"); }
+    else { e.textContent = ""; e.classList.remove("show"); }
+  }
+
+  function syncCat(){
+    var c = catById[sel.value];
+    sel.classList.toggle("placeholder", !c);
+    var ex = c && c.extra;
+    $("extraRow").hidden = !ex;
+    $("noteRow").hidden = !!ex;
+    if (ex){
+      $("extraLabel").textContent = ex.label;
+      $("extra").placeholder = ex.ph;
+      $("extra").focus();
+    }
+    showErr("");
+  }
+  sel.addEventListener("change", syncCat);
+
+  function save(){ write(KEY, JSON.stringify(items)); }
+  function spentTotal(){ return items.reduce(function(s,i){ return s + i.amount; }, 0); }
+  function typedK(){ return parseInt($("amount").value.replace(/\D/g,""),10) || 0; }
+
+  function renderPreview(){
+    var k = typedK(), p = $("preview");
+    if (!k){ p.textContent = ""; p.classList.remove("over"); return; }
+    var after = budget - spentTotal() - k*1000;
+    p.classList.toggle("over", after < 0);
+    p.innerHTML = after < 0
+      ? "Vượt ngân sách <b>" + fmt(-after) + "</b>"
+      : "Sau khoản này còn <b>" + fmt(after) + "</b>";
+  }
+
+  function renderSummary(spent){
+    var wrap = $("sumWrap"), box = $("sum");
+    box.innerHTML = "";
+    if (!items.length){ wrap.hidden = true; return; }
+    wrap.hidden = false;
+    var totals = {};
+    items.forEach(function(it){
+      var key = catById[it.cat] ? it.cat : "_none";
+      totals[key] = (totals[key] || 0) + it.amount;
+    });
+    Object.keys(totals).sort(function(a,b){ return totals[b] - totals[a]; }).forEach(function(key){
+      var c = key === "_none" ? NOCAT : catById[key];
+      var row = document.createElement("div"); row.className = "srow";
+      var ico = document.createElement("div"); ico.className = "ico"; ico.textContent = c.icon; ico.style.background = c.color;
+      var lb = document.createElement("div"); lb.className = "slabel"; lb.textContent = c.label;
+      var am = document.createElement("div"); am.className = "samt"; am.textContent = fmt(totals[key]);
+      var bar = document.createElement("div"); bar.className = "sbar";
+      var i = document.createElement("i"); i.style.width = Math.max(4, Math.round(totals[key]/spent*100)) + "%"; i.style.background = c.color;
+      bar.appendChild(i);
+      row.appendChild(ico); row.appendChild(lb); row.appendChild(am); row.appendChild(bar);
+      box.appendChild(row);
+    });
+  }
+
+  function render(){
+    var spent = spentTotal();
+    var left = budget - spent;
+    var pct = Math.min(100, Math.round(spent / budget * 100));
+
+    $("left").textContent = (left < 0 ? "-" : "") + fmt(Math.abs(left));
+    $("hero").classList.toggle("over", left < 0);
+    $("spent").textContent = fmt(spent);
+    $("budget").textContent = fmt(budget);
+    $("fill").style.width = pct + "%";
+    $("fill").classList.toggle("warn", pct >= 80);
+    $("hero").classList.toggle("over", left < 0);
+    $("bar").setAttribute("aria-valuenow", pct);
+    var pe = $("pct"); if (pe) pe.textContent = Math.round(spent / budget * 100) + "%";
+
+    var a = $("alert");
+    if (left < 0){
+      a.textContent = "Bạn đã vượt ngân sách " + fmt(-left) + ".";
+      a.classList.add("show");
+    } else if (pct >= 80){
+      a.textContent = "Đã tiêu " + pct + "% ngân sách. Chỉ còn " + fmt(left) + ".";
+      a.classList.add("show");
+    } else {
+      a.classList.remove("show");
+    }
+
+    renderSummary(spent);
+
+    var ul = $("list");
+    ul.innerHTML = "";
+    if (!items.length){
+      var e = document.createElement("li");
+      e.className = "empty";
+      e.textContent = "Chưa có khoản chi nào. Nhập số tiền và chọn danh mục để bắt đầu.";
+      ul.appendChild(e);
+      renderPreview();
+      return;
+    }
+    items.slice().reverse().forEach(function(it){
+      var li = document.createElement("li");
+      var d = new Date(it.t);
+      var c = catById[it.cat];
+
+      var ico = document.createElement("div"); ico.className = "ico";
+      ico.textContent = c ? c.icon : NOCAT.icon;
+      ico.style.background = (c || NOCAT).color;
+      ico.style.background = c ? c.color : NOCAT.color;
+
+      var info = document.createElement("div"); info.className = "info";
+      var n = document.createElement("div"); n.className = "note";
+      if (c){
+        n.textContent = c.label + (it.detail ? ": " + it.detail : "");
+      } else {
+        n.textContent = it.note || "Không ghi chú"; // khoản cũ chưa có danh mục
+      }
+      var dt = document.createElement("div"); dt.className = "date";
+      var when = d.getDate() + "/" + (d.getMonth()+1) + " lúc " + stamp(d);
+      dt.textContent = (c && it.note) ? it.note + " | " + when : when;
+      info.appendChild(n); info.appendChild(dt);
+
+      var am = document.createElement("div"); am.className = "amt"; am.textContent = fmt(it.amount);
+      var del = document.createElement("button"); del.className = "del"; del.type = "button";
+      del.setAttribute("aria-label","Xóa khoản chi"); del.textContent = "×";
+      var armed = false;
+      del.onclick = function(){
+        if (!armed){
+          armed = true; del.textContent = "Xóa?"; del.style.width = "auto"; del.style.padding = "0 8px";
+          del.style.color = "var(--warn)"; del.style.fontSize = "14px"; del.style.fontWeight = "700";
+          setTimeout(function(){ if (document.body.contains(del)) render(); }, 3000);
+          return;
+        }
+        items = items.filter(function(x){ return x.id !== it.id; });
+        save(); render();
+      };
+      li.appendChild(ico); li.appendChild(info); li.appendChild(am); li.appendChild(del);
+      ul.appendChild(li);
+    });
+    renderPreview();
+  }
+
+  // Đồng hồ: cho thấy thời điểm khoản chi sẽ được ghi nhận
+  function tick(){
+    var d = new Date();
+    $("clock").textContent = "Sẽ ghi nhận lúc " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) +
+      ", " + pad(d.getDate()) + "/" + pad(d.getMonth()+1);
+  }
+  tick(); setInterval(tick, 1000);
+
+  function formatInput(el){
+    var digits = el.value.replace(/\D/g,"");
+    el.value = digits ? parseInt(digits,10).toLocaleString("vi-VN") : "";
+  }
+
+  $("amount").addEventListener("input", function(e){ formatInput(e.target); renderPreview(); showErr(""); });
+
+
+  // Bé Mochi: lời thoại theo danh mục
+  var LINES = {
+    coffee:  ["Tuyệt vời, uống nào", "Caffeine vào người, chạy deadline thôi", "Một ly cho tỉnh, hai ly cho slay"],
+    mukbang: ["Măm măm, đói là phải ăn thôi", "Ăn ngon thì không có lỗi", "Mukbang cháy máy luôn bà ơi"],
+    credit:  ["Quẹt nhẹ thôi nha, đừng để thẻ khóc", "Quẹt cái rẹt, cuối tháng nhớ trả nha", "Thẻ đang hơi mệt rồi đó nha"],
+    mama:    ["Mama out trình, iu mama 3000", "Có mama là có tất cả", "Mama quẹt thẻ, con đứng hình"],
+    skin:    ["Đẹp da là chân ái", "Skin đẹp thì mood mới đẹp", "Glow up không cần lý do"],
+    clothes: ["Outfit mới, ra đường là slay", "Thêm một bộ để flex", "Mặc đẹp là tôn trọng bản thân"],
+    other:   ["Lặt vặt nhưng vui là được, okela", "Nhỏ mà có võ", "Mua cho vui, không hối hận"],
+    treat:   ["Chơi lớn ghê, bao cả thế giới luôn", "Hào phóng quá trời quá đất", "Người tốt việc tốt của năm"]
+  };
+  var OVER = ["Ơ kìa, vượt ngân sách {x} rồi, toang thật sự", "Ví đang khóc nè, lố {x} rồi đó", "Báo động đỏ, lố {x} rồi bà ơi"];
+  function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  var buddyTimer = null;
+  function showBuddy(c, amount){
+    var b = $("buddy");
+    var left = budget - spentTotal();
+    var sad = left < 0;
+    $("buddyItem").textContent = c.icon;
+    $("buddyTitle").textContent = "-" + fmt(amount);
+    $("buddyText").textContent = sad ? pick(OVER).replace("{x}", fmt(-left)) : (LINES[c.id] ? pick(LINES[c.id]) : "Ghi lại rồi nha");
+    b.classList.toggle("sad", sad);
+    b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
+    clearTimeout(buddyTimer);
+    buddyTimer = setTimeout(function(){ b.classList.remove("show"); }, 2800);
+  }
+  $("buddy").addEventListener("click", function(){ this.classList.remove("show"); });
+
+  function addExpense(){
+    var k = typedK();
+    var c = catById[sel.value];
+    if (!k){ showErr("Nhập số tiền nhé."); $("amount").focus(); return; }
+    if (!c){ showErr("Chọn danh mục trước nhé."); sel.focus(); return; }
+    var detail = "";
+    if (c.extra){
+      detail = $("extra").value.trim();
+      if (!detail){ showErr(c.extra.err); $("extra").focus(); return; }
+    }
+    items.push({
+      id: Date.now(), amount: k*1000, cat: c.id, detail: detail,
+      note: c.extra ? "" : $("note").value.trim(), t: Date.now()
+    });
+    save();
+    $("amount").value = ""; $("note").value = ""; $("extra").value = "";
+    sel.value = ""; syncCat();
+    $("amount").focus();
+    render();
+    showBuddy(c, k*1000);
+  }
+  $("addBtn").addEventListener("click", addExpense);
+  ["amount","note","extra"].forEach(function(id){
+    $(id).addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); addExpense(); } });
+  });
+
+  $("setBudget").addEventListener("click", function(){
+    $("budgetInput").value = (budget/1000).toLocaleString("vi-VN",{maximumFractionDigits:1});
+    $("budgetEditor").classList.toggle("show");
+    $("budgetInput").focus();
+  });
+  $("budgetInput").addEventListener("input", function(e){ formatInput(e.target); });
+  $("saveBudget").addEventListener("click", function(){
+    var n = parseInt($("budgetInput").value.replace(/\D/g,""),10);
+    if (n > 0){ budget = n*1000; write(BKEY, String(budget)); $("budgetEditor").classList.remove("show"); render(); }
+  });
+
+  syncCat();
+  render();
+})();
+</script>
+</body>
+</html>
