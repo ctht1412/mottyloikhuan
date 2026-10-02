@@ -199,6 +199,25 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid 
 
 h2{margin:32px 0 12px 10px;font-family:var(--f-disp);font-size:17px;font-weight:400;line-height:1.35;transform:rotate(-2deg)}
 #sumWrap h2{background:var(--lilac)}
+#histWrap h2{background:var(--mint)}
+.month-card{
+  background:var(--paper);border:2px solid var(--edge);border-radius:var(--blob);
+  box-shadow:0 5px 0 rgba(90,52,38,.18);margin-bottom:14px;overflow:hidden;
+}
+.month-card summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center}
+.month-card summary::-webkit-details-marker{display:none}
+.mc-title{font-family:var(--f-fun);font-weight:800;font-size:19px}
+.mc-title::after{content:"▾";display:inline-block;margin-left:8px;font-size:14px;transition:transform .2s}
+.month-card[open] .mc-title::after{transform:rotate(180deg)}
+.mc-total{font-weight:800;white-space:nowrap}
+.mc-sub{grid-column:1 / -1;font-size:13px;color:var(--mute)}
+.mc-sub b{color:var(--ink)}
+.mc-sub .over{color:var(--warn)}
+.mc-bar{grid-column:1 / -1;height:12px;border-radius:99px;background:var(--paper2);border:1.5px solid var(--edge);overflow:hidden}
+.mc-bar i{display:block;height:100%;background:var(--plaid)}
+.mc-bar i.warn{background:var(--plaid-warn)}
+.mc-body{padding:2px 16px 6px;border-top:1.5px dashed var(--line)}
+.hist-empty{background:var(--paper);border:2px dashed var(--line);border-radius:var(--blob);padding:18px;text-align:center;color:var(--mute);font-size:14px;margin:0}
 .sum{padding:4px 14px}
 .srow{display:grid;grid-template-columns:44px 1fr auto;gap:5px 12px;align-items:center;padding:10px 0;border-bottom:1.5px dashed var(--line)}
 .srow:last-child{border-bottom:0}
@@ -357,6 +376,11 @@ li:last-child{border-bottom:0}
   <div><h2>Các khoản chi tháng này</h2></div>
   <ul id="list"></ul>
 
+  <div id="histWrap">
+    <div><h2>Lịch sử các tháng</h2></div>
+    <div id="hist"></div>
+  </div>
+
   <div class="tools">
     <button class="link" id="setBudget" type="button">Đổi ngân sách tháng</button>
   </div>
@@ -414,8 +438,10 @@ li:last-child{border-bottom:0}
   var NOCAT = { icon:"💸", label:"Chưa phân loại", color:"#EFE3D3" };
   CATS.forEach(function(c){ catById[c.id] = c; });
 
-  var now = new Date();
-  var monthKey = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+  function monthKeyOf(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0"); }
+  function labelOf(mk){ var p = mk.split("-"); return "Tháng " + parseInt(p[1],10) + "/" + p[0]; }
+  function metaKey(mk){ return "chitieu:meta:" + mk; }
+  var monthKey = monthKeyOf(new Date());
   var KEY = "chitieu:" + monthKey;
   var BKEY = "chitieu:budget";
   var memory = {};
@@ -431,7 +457,10 @@ li:last-child{border-bottom:0}
 
   var budget = parseInt(read(BKEY),10) || DEFAULT_BUDGET;
   var items = [];
-  try { items = JSON.parse(read(KEY)) || []; } catch(e){ items = []; }
+  function loadItems(key){ try { return JSON.parse(read(key)) || []; } catch(e){ return []; } }
+  items = loadItems(KEY);
+  // ghi ngân sách của tháng hiện tại để tháng sau xem lại vẫn đúng
+  if (!read(metaKey(monthKey))) write(metaKey(monthKey), JSON.stringify({ budget: budget }));
 
   var $ = function(id){ return document.getElementById(id); };
   var fmt = function(dong){
@@ -440,7 +469,8 @@ li:last-child{border-bottom:0}
   var pad = function(n){ return String(n).padStart(2,"0"); };
   var stamp = function(d){ return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
 
-  $("month").textContent = "Tháng " + (now.getMonth()+1) + "/" + now.getFullYear();
+  function setMonthLabel(){ $("month").textContent = labelOf(monthKey); }
+  setMonthLabel();
 
   // Dropdown danh mục
   var sel = $("cat");
@@ -474,7 +504,88 @@ li:last-child{border-bottom:0}
   }
   sel.addEventListener("change", syncCat);
 
-  function save(){ write(KEY, JSON.stringify(items)); }
+  function save(){
+    write(KEY, JSON.stringify(items));
+    write(metaKey(monthKey), JSON.stringify({ budget: budget }));
+  }
+
+  // Tự sang tháng mới: tháng cũ giữ nguyên trong lịch sử, tháng mới bắt đầu từ 0
+  function checkMonth(){
+    var mk = monthKeyOf(new Date());
+    if (mk === monthKey) return;
+    monthKey = mk;
+    KEY = "chitieu:" + mk;
+    items = loadItems(KEY);
+    if (!read(metaKey(mk))) write(metaKey(mk), JSON.stringify({ budget: budget }));
+    setMonthLabel();
+    render();
+  }
+  document.addEventListener("visibilitychange", function(){ if (!document.hidden) checkMonth(); });
+
+  function pastMonths(){
+    var keys = {};
+    try {
+      for (var i = 0; i < localStorage.length; i++) keys[localStorage.key(i)] = 1;
+    } catch(e){}
+    Object.keys(memory).forEach(function(k){ keys[k] = 1; });
+    return Object.keys(keys)
+      .map(function(k){ var m = k.match(/^chitieu:(\d{4}-\d{2})$/); return m ? m[1] : null; })
+      .filter(function(mk){ return mk && mk !== monthKey; })
+      .sort().reverse();
+  }
+
+  function renderHistory(){
+    var box = $("hist");
+    box.innerHTML = "";
+    var months = pastMonths();
+    if (!months.length){
+      var p = document.createElement("p"); p.className = "hist-empty";
+      p.textContent = "Chưa có tháng nào để xem lại. Sang tháng mới, toàn bộ chi tiêu tháng này sẽ được lưu ở đây.";
+      box.appendChild(p);
+      return;
+    }
+    months.forEach(function(mk){
+      var its = loadItems("chitieu:" + mk);
+      var meta = {}; try { meta = JSON.parse(read(metaKey(mk))) || {}; } catch(e){}
+      var b = meta.budget || budget;
+      var total = its.reduce(function(s,i){ return s + i.amount; }, 0);
+      var pct = b ? Math.round(total / b * 100) : 0;
+
+      var card = document.createElement("details"); card.className = "month-card";
+      var sum = document.createElement("summary");
+      var t = document.createElement("span"); t.className = "mc-title"; t.textContent = labelOf(mk);
+      var tot = document.createElement("span"); tot.className = "mc-total"; tot.textContent = fmt(total);
+      var sub = document.createElement("span"); sub.className = "mc-sub";
+      var diff = b - total;
+      sub.innerHTML = its.length + " khoản, ngân sách <b>" + fmt(b) + "</b>, " +
+        (diff >= 0 ? "dư <b>" + fmt(diff) + "</b>" : "<b class='over'>lố " + fmt(-diff) + "</b>");
+      var bar = document.createElement("span"); bar.className = "mc-bar";
+      var fi = document.createElement("i"); fi.style.width = Math.min(100, pct) + "%";
+      if (pct >= 100) fi.className = "warn";
+      bar.appendChild(fi);
+      sum.appendChild(t); sum.appendChild(tot); sum.appendChild(sub); sum.appendChild(bar);
+      card.appendChild(sum);
+
+      var body = document.createElement("div"); body.className = "mc-body";
+      var totals = {};
+      its.forEach(function(it){ var k = catById[it.cat] ? it.cat : "_none"; totals[k] = (totals[k] || 0) + it.amount; });
+      Object.keys(totals).sort(function(a,c){ return totals[c] - totals[a]; }).forEach(function(k){
+        var c = k === "_none" ? NOCAT : catById[k];
+        var row = document.createElement("div"); row.className = "srow";
+        var ico = document.createElement("div"); ico.className = "ico"; ico.textContent = c.icon; ico.style.background = c.color;
+        var lb = document.createElement("div"); lb.className = "slabel"; lb.textContent = c.label;
+        var am = document.createElement("div"); am.className = "samt"; am.textContent = fmt(totals[k]);
+        var sb = document.createElement("div"); sb.className = "sbar";
+        var i2 = document.createElement("i"); i2.style.width = Math.max(4, Math.round(totals[k] / (total || 1) * 100)) + "%"; i2.style.background = c.color;
+        sb.appendChild(i2);
+        row.appendChild(ico); row.appendChild(lb); row.appendChild(am); row.appendChild(sb);
+        body.appendChild(row);
+      });
+      if (!its.length){ var e = document.createElement("p"); e.className = "empty"; e.textContent = "Tháng này không có khoản chi nào."; body.appendChild(e); }
+      card.appendChild(body);
+      box.appendChild(card);
+    });
+  }
   function spentTotal(){ return items.reduce(function(s,i){ return s + i.amount; }, 0); }
   function typedK(){ return parseInt($("amount").value.replace(/\D/g,""),10) || 0; }
 
@@ -539,6 +650,7 @@ li:last-child{border-bottom:0}
     }
 
     renderSummary(spent);
+    renderHistory();
 
     var ul = $("list");
     ul.innerHTML = "";
@@ -595,6 +707,7 @@ li:last-child{border-bottom:0}
   // Đồng hồ: cho thấy thời điểm khoản chi sẽ được ghi nhận
   function tick(){
     var d = new Date();
+    checkMonth();
     $("clock").textContent = "Sẽ ghi nhận lúc " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) +
       ", " + pad(d.getDate()) + "/" + pad(d.getMonth()+1);
   }
@@ -670,7 +783,7 @@ li:last-child{border-bottom:0}
   $("budgetInput").addEventListener("input", function(e){ formatInput(e.target); });
   $("saveBudget").addEventListener("click", function(){
     var n = parseInt($("budgetInput").value.replace(/\D/g,""),10);
-    if (n > 0){ budget = n*1000; write(BKEY, String(budget)); $("budgetEditor").classList.remove("show"); render(); }
+    if (n > 0){ budget = n*1000; write(BKEY, String(budget)); save(); $("budgetEditor").classList.remove("show"); render(); }
   });
 
 
